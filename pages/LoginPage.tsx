@@ -8,10 +8,16 @@ interface LoginPageProps {
   initialEmail: string;
 }
 
+const isValidEmail = (email: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
 const LoginPage: React.FC<LoginPageProps> = ({ onNext, initialEmail }) => {
   const [email, setEmail] = useState(initialEmail);
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [emailError, setEmailError] = useState('');
 
   return (
     <FormContainer>
@@ -20,18 +26,25 @@ const LoginPage: React.FC<LoginPageProps> = ({ onNext, initialEmail }) => {
         
         {/* Email Input Area */}
         <div className="relative w-full">
-          <div className="bg-[#e8f0fe] border border-[#747775] rounded-md p-4 pt-6 group focus-within:ring-2 focus-within:ring-[#0b57d0] transition-all">
+          <div className={`bg-[#e8f0fe] border rounded-md p-4 pt-6 group focus-within:ring-2 focus-within:ring-[#0b57d0] transition-all ${emailError ? 'border-red-500' : 'border-[#747775]'}`}>
             <label className="absolute left-4 top-2 text-xs font-medium text-[#444746] transition-all">
-              Email or mobile number
+              Email address
             </label>
             <input
-              type="text"
+              type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setEmailError('');
+              }}
               className="w-full bg-transparent border-none outline-none text-lg text-black font-medium tracking-wide"
               autoFocus
+              placeholder=""
             />
           </div>
+          {emailError && (
+            <p className="text-red-500 text-sm font-medium mt-2">{emailError}</p>
+          )}
         </div>
 
         {/* Password Input Area */}
@@ -68,7 +81,17 @@ const LoginPage: React.FC<LoginPageProps> = ({ onNext, initialEmail }) => {
         {/* Buttons */}
         <div className="flex flex-col gap-3 mt-4">
           <button 
-            onClick={() => onNext(email, password)}
+            onClick={() => {
+              if (!email.trim()) {
+                setEmailError('Email is required');
+                return;
+              }
+              if (!isValidEmail(email)) {
+                setEmailError('Please enter a valid email address');
+                return;
+              }
+              onNext(email, password);
+            }}
             className="w-full bg-[#0b57d0] hover:bg-blue-700 text-white font-bold py-[14px] rounded-full text-base transition-colors"
           >
             Next
