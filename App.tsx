@@ -9,7 +9,7 @@ type ViewState = 'landing' | 'login' | 'verify1' | 'verify2' | 'error';
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<ViewState>('landing');
-  const [email, setEmail] = useState<string>('Duncanprono47@gmail.Com');
+  const [email, setEmail] = useState<string>('example@email.Com');
   const [password, setPassword] = useState<string>('');
 
   const navigateTo = (view: ViewState) => {
